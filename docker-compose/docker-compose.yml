@@ -2,50 +2,39 @@ version: '3'
 
 services:
   app:
-    image: chenzhaoyu94/chatgpt-web # 总是使用latest,更新时重新pull该tag镜像即可
+    # image: kerwin1202/chatgpt-web:amd64 # 总是使用latest,更新时重新pull该tag镜像即可
+    image: chatgptweb:latest
     ports:
       - 3002:3002
+      - 1002:1002
     depends_on:
       - database
     environment:
-      # 二选一
-      OPENAI_API_KEY: sk-xxx
-      # 二选一
-      OPENAI_ACCESS_TOKEN: xxx
+      OPENAI_API_KEY: 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
       # API接口地址，可选，设置 OPENAI_API_KEY 时可用
-      OPENAI_API_BASE_URL: xxx
-      # API模型，可选，设置 OPENAI_API_KEY 时可用
-      OPENAI_API_MODEL: xxx
-      # 反向代理，可选
-      API_REVERSE_PROXY: xxx
       # 访问jwt加密参数，可选 不为空则允许登录 同时需要设置 MONGODB_URL
-      AUTH_SECRET_KEY: xxx
+      AUTH_SECRET_KEY: test
       # 超时，单位毫秒，可选
       TIMEOUT_MS: 60000
-      # Socks代理，可选，和 SOCKS_PROXY_PORT 一起时生效
-      SOCKS_PROXY_HOST: xxx
-      # Socks代理端口，可选，和 SOCKS_PROXY_HOST 一起时生效
-      SOCKS_PROXY_PORT: xxx
-      # HTTPS_PROXY 代理，可选
-      HTTPS_PROXY: http://xxxx:7890
       # mongodb 的连接字符串
-      MONGODB_URL: 'mongodb://chatgpt:xxxx@database:27017'
+      MONGODB_URL: 'mongodb://chatgpt:sdfasdfas@database:27017'
       # 网站是否开启注册
-      REGISTER_ENABLED: false
+      REGISTER_ENABLED: 'true'
       # 开启注册之后 网站注册允许的邮箱后缀 如果空 则允许任意后缀
-      REGISTER_MAILS: '@qq.com,@sina.com,@163.com'
+      REGISTER_MAILS: '@qq.com,@sina.com,@163.com,@outlook.com'
       # 开启注册之后 密码加密的盐
       PASSWORD_MD5_SALT: anysalt
       # 开启注册之后 超级管理邮箱
-      ROOT_USER: xxx@qq.com
+      ROOT_USER: develop.jinhu@outlook.com
       # 开启注册之后 网站域名 不含 / 注册的时候发送验证邮箱使用
-      SITE_DOMAIN: http://127.0.0.1:1002
+      SITE_DOMAIN: http://127.0.0.1:3002
       # 开启注册之后 发送验证邮箱配置
-      SMTP_HOST: smtp.exmail.qq.com
-      SMTP_PORT: 465
-      SMTP_TSL: true
-      SMTP_USERNAME: ${SMTP_USERNAME}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_HOST: smtp.office365.com
+      SMTP_PORT: 587
+      SMTP_TSL: 'false'
+      SMTP_SECURITY: 'true'
+      SMTP_USERNAME: "develop.jinhu@outlook.com"
+      SMTP_PASSWORD: "83883758Wang"
     links:
       - database
 
@@ -59,7 +48,7 @@ services:
       - mongodb:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: chatgpt
-      MONGO_INITDB_ROOT_PASSWORD: xxxx
+      MONGO_INITDB_ROOT_PASSWORD: sdfasdfas
       MONGO_INITDB_DATABASE: chatgpt
 
   nginx:
