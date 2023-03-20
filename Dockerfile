@@ -5,6 +5,8 @@ RUN npm install pnpm -g
 
 WORKDIR /app
 
+COPY ./Ads.txt /app
+
 COPY ./package.json /app
 
 COPY ./pnpm-lock.yaml /app
