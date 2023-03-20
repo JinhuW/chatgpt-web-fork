@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { NButton, useDialog, useMessage } from 'naive-ui'
+import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -10,7 +10,7 @@ import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
-import { SvgIcon } from '@/components/common'
+import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
@@ -458,16 +458,6 @@ onUnmounted(() => {
   if (loading.value)
     controller.abort()
 })
-
-try {
-  caches.keys().then((names) => {
-    for (const name of names)
-      caches.delete(name)
-  })
-}
-catch (error) {
-  //
-}
 </script>
 
 <template>
@@ -521,7 +511,7 @@ catch (error) {
         </div>
       </div>
     </main>
-    <!-- <footer :class="footerClass">
+    <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="flex items-center justify-between space-x-2">
           <HoverButton @click="handleClear">
@@ -562,6 +552,6 @@ catch (error) {
           </NButton>
         </div>
       </div>
-    </footer> -->
+    </footer>
   </div>
 </template>
