@@ -1,9 +1,11 @@
 import express from 'express'
+import replicate from 'node-replicate'
 import type { ChatContext, ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString } from './utils/is'
+import { fakeChatMessage } from './chatgpt/fakeResponse'
 
 const app = express()
 const router = express.Router()
@@ -25,11 +27,29 @@ router.post('/chat-process', auth, async (req, res) => {
 
   try {
     const { prompt, options = {} } = req.body as { prompt: string; options?: ChatContext }
-    let firstChunk = true
-    await chatReplyProcess(prompt, options, (chat: ChatMessage) => {
-      res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
-      firstChunk = false
-    })
+
+    if (prompt?.startsWith('Image Prompt(English Only):')) {
+      const imagePrompt = prompt.replace('Image Prompt(English Only):', '').trim()
+      const prediction = await replicate
+        .model(
+          'stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
+        )
+        .predict({
+          prompt: imagePrompt,
+        })
+      const outputUrl = prediction.output[0]
+      global.console.log(outputUrl)
+      await chatReplyProcess(prompt, options, (chat: ChatMessage) => {
+        res.write(`\n${JSON.stringify(fakeChatMessage(outputUrl))}`)
+      })
+    }
+    else {
+      let firstChunk = true
+      await chatReplyProcess(prompt, options, (chat: ChatMessage) => {
+        res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
+        firstChunk = false
+      })
+    }
   }
   catch (error) {
     res.write(JSON.stringify(error))

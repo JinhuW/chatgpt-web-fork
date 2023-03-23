@@ -89,6 +89,8 @@ async function chatReplyProcess(
       },
     })
 
+    global.console.log(JSON.stringify(response, null, 2))
+
     return sendResponse({ type: 'Success', data: response })
   }
   catch (error: any) {
