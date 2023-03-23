@@ -26,6 +26,7 @@ specifiers:
   markdown-it: ^13.0.1
   markdown-it-link-attributes: ^4.0.1
   naive-ui: ^2.34.3
+  node-replicate: ^1.1.5
   npm-run-all: ^4.1.5
   pinia: ^2.0.33
   postcss: ^8.4.21
@@ -47,6 +48,7 @@ dependencies:
   katex: 0.16.4
   markdown-it: 13.0.1
   naive-ui: 2.34.3_vue@3.2.47
+  node-replicate: 1.1.5
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
   vue: 3.2.47
   vue-i18n: 9.2.2_vue@3.2.47
@@ -2797,6 +2799,12 @@ packages:
     resolution: {integrity: sha512-mKKUkUbhPpQlCOfIuZkvSEgktjPFIsZKRRbC6KWVEMvlzblj3i3asQv5ODsrwt0N3pHAEvjP8KTQPHkp0+6jOg==}
     dev: true
 
+  /chiaki/1.0.7:
+    resolution: {integrity: sha512-W3oCAQGvrM82TtEycnUYa0+OrE7J7ZAjWn3KHKksucV3DMvv2IB/3GojOVxjs6Rd6E9HxYb0rXcDpIwWw76Gnw==}
+    dependencies:
+      unstreamify: 1.0.2
+    dev: false
+
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
@@ -5094,6 +5102,12 @@ packages:
     resolution: {integrity: sha512-5GFldHPXVG/YZmFzJvKK2zDSzPKhEp0+ZR5SVaoSag9fsL5YgHbUHDfnG5494ISANDcK4KwPXAx2xqVEydmd7w==}
     dev: true
 
+  /node-replicate/1.1.5:
+    resolution: {integrity: sha512-k60h+8xny895EXFs5A4tt0ayW4QAMMtHOtvuALCoSRUm/M5Ho5ItiryOzqAlo8IYmSfXlfKVPhA12QZcPNj38w==}
+    dependencies:
+      chiaki: 1.0.7
+    dev: false
+
   /normalize-package-data/2.5.0:
     resolution: {integrity: sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==}
     dependencies:
@@ -6356,6 +6370,10 @@ packages:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
     dev: true
+
+  /unstreamify/1.0.2:
+    resolution: {integrity: sha512-o5M3+H9hBsRE4oSMGsMTOqwD9PT2kT4RQmSPsL0D5UAooJzI0o5oynNski4dK0jB2CXt0hD/nSMZP8+VmLWVhA==}
+    dev: false
 
   /upath/1.2.0:
     resolution: {integrity: sha512-aZwGpamFO61g3OlfT7OQCHqhGnW43ieH9WZeP7QxN/G/jS4jfqUkZxoryvJgVPEcrl5NL/ggHsSmLMHuH64Lhg==}
