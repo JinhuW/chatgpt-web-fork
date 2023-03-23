@@ -9,8 +9,9 @@ export interface PromptStore {
 }
 
 export function getLocalPromptList(): PromptStore {
+  ss.set(LOCAL_NAME, { promptList: [{ key: '照片生成', value: 'Image Prompt(English Only):' }] })
   const promptStore: PromptStore | undefined = ss.get(LOCAL_NAME)
-  return promptStore ?? { promptList: [{ key: '照片生成', value: 'Image Prompt(English Only):' }] }
+  return promptStore ?? { promptList: [] }
 }
 
 export function setLocalPromptList(promptStore: PromptStore): void {
