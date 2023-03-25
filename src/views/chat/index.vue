@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
+import { NAutoComplete, NButton, NInput, NSelect, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -49,6 +49,27 @@ const promptStore = usePromptStore()
 // 使用storeToRefs，保证store修改后，联想部分能够重新渲染
 const { promptList: promptTemplate } = storeToRefs<any>(promptStore)
 
+const placeholder = ref<string>(isMobile.value ? t('chat.placeholderMobile') : t('chat.placeholder'))
+
+const modelSelectDisabled = ref<boolean>(false)
+
+const defaultModel = ref<Chat.SelectModel>({
+  label: 'GPT-3.5', key: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo',
+})
+
+const modelOptions: { label: string; key: string; value: string }[] = [
+  { label: 'GPT-3', key: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo' },
+  { label: 'Stable Diffusion', key: 'stable-diffusion', value: 'stable-diffusion' },
+]
+
+function handleSelectModel(model: string) {
+  defaultModel.value = modelOptions.find(obj => obj.key === model) || defaultModel.value
+  if (model === 'stable-diffusion')
+    placeholder.value = 'stable diffusion 目前只支持英文'
+  else
+    placeholder.value = isMobile.value ? t('chat.placeholderMobile') : t('chat.placeholder')
+}
+
 // 未知原因刷新页面，loading 状态不会重置，手动重置
 dataSources.value.forEach((item, index) => {
   if (item.loading)
@@ -91,7 +112,7 @@ async function onConversation() {
 
   if (lastContext && usingContext.value)
     options = { ...lastContext }
-
+  options.apiModel = defaultModel.value.key
   addChat(
     +uuid,
     {
@@ -108,6 +129,7 @@ async function onConversation() {
 
   try {
     let lastText = ''
+    options.apiModel = defaultModel.value.key
     const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         prompt: message,
@@ -132,7 +154,7 @@ async function onConversation() {
                 inversion: false,
                 error: false,
                 loading: false,
-                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id, apiModel: defaultModel.value.key },
                 requestOptions: { prompt: message, options: { ...options } },
               },
             )
@@ -216,6 +238,7 @@ async function onRegenerate(index: number) {
   let message = requestOptions?.prompt ?? ''
 
   let options: Chat.ConversationRequest = {}
+  options.apiModel = defaultModel.value.key
 
   if (requestOptions.options)
     options = { ...requestOptions.options }
@@ -262,7 +285,7 @@ async function onRegenerate(index: number) {
                 inversion: false,
                 error: false,
                 loading: false,
-                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id, apiModel: defaultModel.value.key },
                 requestOptions: { prompt: message, ...options },
               },
             )
@@ -435,12 +458,6 @@ const renderOption = (option: { label: string }) => {
   return []
 }
 
-const placeholder = computed(() => {
-  if (isMobile.value)
-    return t('chat.placeholderMobile')
-  return t('chat.placeholder')
-})
-
 const buttonDisabled = computed(() => {
   return loading.value || !prompt.value || prompt.value.trim() === ''
 })
@@ -533,6 +550,15 @@ onUnmounted(() => {
               <SvgIcon icon="ri:chat-history-line" />
             </span>
           </HoverButton>
+          <div class="flex flex-wrap items-center gap-4">
+            <NSelect
+              style="width: 140px"
+              :value="defaultModel.label"
+              :options="modelOptions"
+              :disabled="modelSelectDisabled"
+              @update-value="value => handleSelectModel(value)"
+            />
+          </div>
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput

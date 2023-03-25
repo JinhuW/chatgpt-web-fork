@@ -1,5 +1,11 @@
 declare namespace Chat {
 
+	interface SelectModel {
+		label: string
+		key: string
+		value: string
+	}
+
 	interface Chat {
 		dateTime: string
 		text: string
@@ -24,6 +30,7 @@ declare namespace Chat {
 	}
 
 	interface ConversationRequest {
+		apiModel?: string
 		conversationId?: string
 		parentMessageId?: string
 	}
