@@ -28,7 +28,7 @@ router.post('/chat-process', auth, async (req, res) => {
   try {
     const { prompt, options = {} } = req.body as { prompt: string; options?: ChatContext }
 
-    if (prompt?.startsWith('Image Prompt(English Only):')) {
+    if (options.apiModel === 'stable-diffusion') {
       const imagePrompt = prompt.replace('Image Prompt(English Only):', '').trim()
       const prediction = await replicate
         .model(

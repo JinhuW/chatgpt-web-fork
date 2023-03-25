@@ -1,6 +1,7 @@
 import type { FetchFn } from 'chatgpt'
 
 export interface ChatContext {
+  apiModel?: string
   conversationId?: string
   parentMessageId?: string
 }
