@@ -1,11 +1,7 @@
 import express from 'express'
-<<<<<<< HEAD
 import replicate from 'node-replicate'
-import type { ChatContext, ChatMessage } from './chatgpt'
-=======
-import type { RequestProps } from './types'
 import type { ChatMessage } from './chatgpt'
->>>>>>> a3944f86b7b80b0ce63b9818ab9139550f67cc48
+import type { RequestProps } from './types'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
@@ -25,21 +21,45 @@ app.all('*', (_, res, next) => {
   next()
 })
 
+router.use('/chat-process', limiter)
+
 router.post('/chat-process', [auth, limiter], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   try {
     const { prompt, options = {}, systemMessage } = req.body as RequestProps
-    let firstChunk = true
-    await chatReplyProcess({
-      message: prompt,
-      lastContext: options,
-      process: (chat: ChatMessage) => {
-        res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
-        firstChunk = false
-      },
-      systemMessage,
-    })
+
+    if (options.apiModel === 'stable-diffusion') {
+      const prediction = await replicate
+        .model(
+          'stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
+        )
+        .predict({
+          prompt,
+        })
+      const outputUrl = prediction.output[0]
+      global.console.log(outputUrl)
+      await chatReplyProcess({
+        message: prompt,
+        lastContext: options,
+        process: () => {
+          res.write(`\n${JSON.stringify(fakeChatMessage(outputUrl))}`)
+        },
+        systemMessage,
+      })
+    }
+    else {
+      let firstChunk = true
+      await chatReplyProcess({
+        message: prompt,
+        lastContext: options,
+        process: (chat: ChatMessage) => {
+          res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
+          firstChunk = false
+        },
+        systemMessage,
+      })
+    }
   }
   catch (error) {
     res.write(JSON.stringify(error))

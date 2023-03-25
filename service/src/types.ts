@@ -7,6 +7,7 @@ export interface RequestProps {
 }
 
 export interface ChatContext {
+  apiModel?: string
   conversationId?: string
   parentMessageId?: string
 }
