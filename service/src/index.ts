@@ -52,6 +52,7 @@ router.post('/chat-process', auth, async (req, res) => {
     }
   }
   catch (error) {
+    global.console.log(`chat-process: ${error}`)
     res.write(JSON.stringify(error))
   }
   finally {
