@@ -67,11 +67,7 @@ function handleSelectModel(model: string) {
   if (model === 'stable-diffusion')
     placeholder.value = 'stable diffusion 目前只支持英文'
   else
-<<<<<<< HEAD
-    placeholder.value = t('chat.placeholder')
-=======
     placeholder.value = isMobile.value ? t('chat.placeholderMobile') : t('chat.placeholder')
->>>>>>> main
 }
 
 // 未知原因刷新页面，loading 状态不会重置，手动重置
@@ -505,12 +501,7 @@ onUnmounted(() => {
           class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
-          <template v-if="!dataSources.length">
-            <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
-              <SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl" />
-              <span>Aha~</span>
-            </div>
-          </template>
+          <template v-if="!dataSources.length" />
           <template v-else>
             <div>
               <Message
@@ -548,11 +539,6 @@ onUnmounted(() => {
           <HoverButton v-if="!isMobile" @click="handleExport">
             <span class="text-xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:download-2-line" />
-            </span>
-          </HoverButton>
-          <HoverButton v-if="!isMobile" @click="toggleUsingContext">
-            <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
-              <SvgIcon icon="ri:chat-history-line" />
             </span>
           </HoverButton>
           <div class="flex flex-wrap items-center gap-4">
