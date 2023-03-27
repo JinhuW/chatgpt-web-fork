@@ -1,4 +1,5 @@
 <script setup lang='ts'>
+import type { Ref } from 'vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -30,7 +31,7 @@ useCopyCode()
 
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
-const { scrollRef, scrollToBottom } = useScroll()
+const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
 
 const { uuid } = route.params as { uuid: string }
@@ -40,6 +41,7 @@ const conversationList = computed(() => dataSources.value.filter(item => (!item.
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
+const inputRef = ref<Ref | null>(null)
 
 // 添加PromptStore
 const promptStore = usePromptStore()
@@ -47,7 +49,7 @@ const promptStore = usePromptStore()
 // 使用storeToRefs，保证store修改后，联想部分能够重新渲染
 const { promptList: promptTemplate } = storeToRefs<any>(promptStore)
 
-const placeholder = ref<string>(t('chat.placeholder'))
+const placeholder = ref<string>(isMobile.value ? t('chat.placeholderMobile') : t('chat.placeholder'))
 
 const modelSelectDisabled = ref<boolean>(false)
 
@@ -65,7 +67,7 @@ function handleSelectModel(model: string) {
   if (model === 'stable-diffusion')
     placeholder.value = 'stable diffusion 目前只支持英文'
   else
-    placeholder.value = t('chat.placeholder')
+    placeholder.value = isMobile.value ? t('chat.placeholderMobile') : t('chat.placeholder')
 }
 
 // 未知原因刷新页面，loading 状态不会重置，手动重置
@@ -138,7 +140,7 @@ async function onConversation() {
           const xhr = event.target
           const { responseText } = xhr
           // Always process the final line
-          const lastIndex = responseText.lastIndexOf('\n')
+          const lastIndex = responseText.lastIndexOf('\n', responseText.length - 2)
           let chunk = responseText
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
@@ -165,7 +167,7 @@ async function onConversation() {
               return fetchChatAPIOnce()
             }
 
-            scrollToBottom()
+            scrollToBottomIfAtBottom()
           }
           catch (error) {
           //
@@ -187,7 +189,7 @@ async function onConversation() {
           loading: false,
         },
       )
-      scrollToBottom()
+      scrollToBottomIfAtBottom()
       return
     }
 
@@ -219,7 +221,7 @@ async function onConversation() {
         requestOptions: { prompt: message, options: { ...options } },
       },
     )
-    scrollToBottom()
+    scrollToBottomIfAtBottom()
   }
   finally {
     loading.value = false
@@ -237,6 +239,7 @@ async function onRegenerate(index: number) {
   let message = requestOptions?.prompt ?? ''
 
   let options: Chat.ConversationRequest = {}
+  options.apiModel = defaultModel.value.key
   options.apiModel = defaultModel.value.key
 
   if (requestOptions.options)
@@ -269,7 +272,7 @@ async function onRegenerate(index: number) {
           const xhr = event.target
           const { responseText } = xhr
           // Always process the final line
-          const lastIndex = responseText.lastIndexOf('\n')
+          const lastIndex = responseText.lastIndexOf('\n', responseText.length - 2)
           let chunk = responseText
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
@@ -470,6 +473,8 @@ const footerClass = computed(() => {
 
 onMounted(() => {
   scrollToBottom()
+  if (inputRef.value && !isMobile.value)
+    inputRef.value?.focus()
 })
 
 onUnmounted(() => {
@@ -559,6 +564,7 @@ onUnmounted(() => {
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput
+                ref="inputRef"
                 v-model:value="prompt"
                 type="textarea"
                 :placeholder="placeholder"
