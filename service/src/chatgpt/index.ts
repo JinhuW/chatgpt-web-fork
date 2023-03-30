@@ -10,7 +10,6 @@ import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
 import type { RequestOptions } from './types'
-
 const { HttpsProxyAgent } = httpsProxyAgent
 
 dotenv.config()
@@ -103,6 +102,10 @@ async function chatReplyProcess(options: RequestOptions) {
       else
         options = { ...lastContext }
     }
+    const isFlagged = await callModerationsAPI(message)
+    console.log('isFlagged', isFlagged)
+    if (isFlagged)
+      return sendResponse({ type: 'Fail', message: '您发送的内容涉及到违反法律，请注意您的问题' })
 
     const response = await api.sendMessage(message, {
       ...options,
@@ -155,6 +158,29 @@ async function chatConfig() {
     type: 'Success',
     data: { apiModel, reverseProxy, timeoutMs, socksProxy, httpsProxy, balance },
   })
+}
+
+async function callModerationsAPI(message: string) {
+  const data = {
+    input: message,
+  }
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+  }
+
+  try {
+    const response = await axios.post('https://api.openai.com/v1/moderations', data, config)
+    console.log('response', response.data)
+    return response.data.results[0].flagged
+  }
+  catch (error) {
+    console.error(error)
+    return false
+  }
 }
 
 function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOptions) {
