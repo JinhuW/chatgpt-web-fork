@@ -53,20 +53,8 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
         message: prompt,
         lastContext: options,
         process: async (chat: ChatMessage) => {
-          if (chat.text.includes('屁') || chat.text.includes('性')) {
-            await chatReplyProcess({
-              message: prompt,
-              lastContext: options,
-              process: () => {
-                res.write(`\n${JSON.stringify({ text: '您的内容涉及不当内容！！！ 请别影响社区啊！！！' })}`)
-              },
-              systemMessage,
-            })
-          }
-          else {
-            res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
-            firstChunk = false
-          }
+          res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
+          firstChunk = false
         },
         systemMessage,
       })
