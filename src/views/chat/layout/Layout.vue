@@ -4,10 +4,10 @@ import { NLayoutContent } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import Permission from './Permission.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useAppStore, useAuthStore, useChatStore } from '@/store'
+import { useAuthStore, useChatStore } from '@/store'
 
 const router = useRouter()
-const appStore = useAppStore()
+// const appStore = useAppStore()
 const chatStore = useChatStore()
 const authStore = useAuthStore()
 
