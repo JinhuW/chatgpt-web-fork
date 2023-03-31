@@ -44,7 +44,14 @@ export default defineConfig((env) => {
       },
     },
     build: {
-      reportCompressedSize: false,
+      assetsInlineLimit: 0, // 设置为0以避免文件过小导致无法生成哈希值
+      rollupOptions: {
+        output: {
+          assetFileNames: '[name].[hash][extname]',
+          chunkFileNames: '[name].[hash].js',
+          entryFileNames: '[name].[hash].js',
+        },
+      },
       sourcemap: false,
       commonjsOptions: {
         ignoreTryCatch: false,
