@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick } from 'vue'
 import { HoverButton, SvgIcon } from '@/components/common'
-import { useAppStore, useChatStore } from '@/store'
+import { useChatStore } from '@/store'
 
 interface Props {
   usingContext: boolean
@@ -16,15 +16,15 @@ defineProps<Props>()
 
 const emit = defineEmits<Emit>()
 
-const appStore = useAppStore()
+// const appStore = useAppStore()
 const chatStore = useChatStore()
 
-const collapsed = computed(() => appStore.siderCollapsed)
+// const collapsed = computed(() => appStore.siderCollapsed)
 const currentChatHistory = computed(() => chatStore.getChatHistoryByCurrentActive)
 
-function handleUpdateCollapsed() {
-  appStore.setSiderCollapsed(!collapsed.value)
-}
+// function handleUpdateCollapsed() {
+//   appStore.setSiderCollapsed(!collapsed.value)
+// }
 
 function onScrollToTop() {
   const scrollRef = document.querySelector('#scrollRef')
@@ -47,18 +47,20 @@ function toggleUsingContext() {
   >
     <div class="relative flex items-center justify-between min-w-0 overflow-hidden h-14">
       <div class="flex items-center">
-        <button
+        <!-- <button
           class="flex items-center justify-center w-11 h-11"
           @click="handleUpdateCollapsed"
         >
           <SvgIcon v-if="collapsed" class="text-2xl" icon="ri:align-justify" />
           <SvgIcon v-else class="text-2xl" icon="ri:align-right" />
-        </button>
+        </button> -->
       </div>
+
       <h1
         class="flex-1 px-4 pr-6 overflow-hidden cursor-pointer select-none text-ellipsis whitespace-nowrap"
         @dblclick="onScrollToTop"
       >
+        {{ $t('chat.chatTitle') }}:
         {{ currentChatHistory?.title ?? '' }}
       </h1>
       <div class="flex items-center space-x-2">

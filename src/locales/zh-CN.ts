@@ -49,6 +49,7 @@ export default {
     clearHistoryConfirm: '确定清空聊天记录?',
     preview: '预览',
     showRawText: '显示原文',
+    chatTitle: '聊天主题',
   },
   setting: {
     setting: '设置',
