@@ -6,6 +6,7 @@ import { SocksProxyAgent } from 'socks-proxy-agent'
 import httpsProxyAgent from 'https-proxy-agent'
 import fetch from 'node-fetch'
 import axios from 'axios'
+import { isRiskyMsg } from 'src/miniprogram/util'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
@@ -30,6 +31,8 @@ let apiModel: ApiModel
 
 if (!isNotEmptyString(process.env.OPENAI_API_KEY) && !isNotEmptyString(process.env.OPENAI_ACCESS_TOKEN))
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
+if (!isNotEmptyString(process.env.COS_SECRET_ID) && !isNotEmptyString(process.env.COS_SECRET_KEY))
+  throw new Error('Error: secret id or secret key is empty.')
 
 let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 
@@ -104,9 +107,8 @@ async function chatReplyProcess(options: RequestOptions) {
         options = { ...lastContext }
     }
     const isFlagged = await callModerationsAPI(message)
-    console.log('isFlagged', isFlagged)
     if (isFlagged)
-      return sendResponse({ type: 'Fail', message: '您发送的内容涉及到违反法律，请注意您的问题' })
+      return sendResponse({ type: 'Fail', message: '您发送的内容涉及到违反法律，请注意您的问题.(所有内容都接受腾讯文本内容安全检测)' })
 
     const response = await api.sendMessage(message, {
       ...options,
@@ -175,7 +177,10 @@ async function callModerationsAPI(message: string) {
 
   try {
     const response = await axios.post('https://api.openai.com/v1/moderations', data, config)
-    console.log('response', response.data)
+    const isFlagged = response.data.results[0].flagged
+
+    if (!isFlagged)
+      return await isRiskyMsg(message, '')
     return response.data.results[0].flagged
   }
   catch (error) {
