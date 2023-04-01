@@ -54,7 +54,7 @@ const placeholder = ref<string>(isMobile.value ? t('chat.placeholderMobile') : t
 const modelSelectDisabled = ref<boolean>(false)
 
 const defaultModel = ref<Chat.SelectModel>({
-  label: 'GPT-3.5', key: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo',
+  label: 'Chat AI', key: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo',
 })
 
 const modelOptions: { label: string; key: string; value: string }[] = [
