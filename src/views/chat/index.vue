@@ -58,7 +58,7 @@ const defaultModel = ref<Chat.SelectModel>({
 })
 
 const modelOptions: { label: string; key: string; value: string }[] = [
-  { label: 'GPT-3', key: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo' },
+  { label: 'Chat AI', key: 'gpt-3.5-turbo', value: 'gpt-3.5-turbo' },
   { label: 'Stable Diffusion', key: 'stable-diffusion', value: 'stable-diffusion' },
 ]
 
