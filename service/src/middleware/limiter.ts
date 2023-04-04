@@ -4,7 +4,7 @@ import { isNotEmptyString } from '../utils/is'
 const MAX_REQUEST_PERHOUR = process.env.MAX_REQUEST_PERHOUR
 
 const rateLimitingError = {
-  message: `[InternalAPI] 请求数量超过${MAX_REQUEST_PERHOUR}条/小时 | Reach the rate limiting in the past hour`,
+  message: '原有域名不再使用，请切换到 https://chataiprompt.com',
   data: null,
   status: 'Fail',
 }
